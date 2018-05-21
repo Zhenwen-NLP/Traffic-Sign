@@ -26,55 +26,6 @@ xxx can be one of the backbones in resnet models (resnet50, resnet101, resnet152
 (mobilenet128_1.0, mobilenet128_0.75, mobilenet160_1.0, etc). The different options are defined by each model in 
 their corresponding python scripts (resnet.py, mobilenet.py, etc).
 
-### Usage
-For training on [Pascal VOC](http://host.robots.ox.ac.uk/pascal/VOC/), run:
-```shell
-# Running directly from the repository:
-keras_retinanet/bin/train.py pascal /path/to/VOCdevkit/VOC2007
-
-# Using the installed script:
-retinanet-train pascal /path/to/VOCdevkit/VOC2007
-```
-
-For training on [MS COCO](http://cocodataset.org/#home), run:
-```shell
-# Running directly from the repository:
-keras_retinanet/bin/train.py coco /path/to/MS/COCO
-
-# Using the installed script:
-retinanet-train coco /path/to/MS/COCO
-```
-
-The pretrained MS COCO model can be downloaded [here](https://github.com/fizyr/keras-retinanet/releases/download/0.2/resnet50_coco_best_v2.0.1.h5). Results using the `cocoapi` are shown below (note: according to the paper, this configuration should achieve a mAP of 0.357).
-
-```
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.345
- Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.533
- Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.368
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.189
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.380
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.465
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.301
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.482
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.529
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.364
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.565
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.666
-```
-
-For training on [OID](https://github.com/openimages/dataset), run:
-```shell
-# Running directly from the repository:
-keras_retinanet/bin/train.py oid /path/to/OID
-
-# Using the installed script:
-retinanet-train oid /path/to/OID
-
-# You can also specify a list of labels if you want to train on a subset
-# by adding the argument 'labels_filter':
-keras_retinanet/bin/train.py oid /path/to/OID --labels_filter=Helmet,Tree
-```
-
 For training on a custom dataset, a CSV file can be used as a way to pass the data.
 See below for more details on the format of these CSV files.
 To train using your CSV, run:
@@ -86,20 +37,6 @@ keras_retinanet/bin/train.py csv /path/to/csv/file/containing/annotations /path/
 retinanet-train csv /path/to/csv/file/containing/annotations /path/to/csv/file/containing/classes
 ```
 
-In general, the steps to train on your own datasets are:
-1) Create a model by calling for instance `keras_retinanet.models.resnet50_retinanet` and compile it.
-   Empirically, the following compile arguments have been found to work well:
-```python
-model.compile(
-    loss={
-        'regression'    : keras_retinanet.losses.smooth_l1(),
-        'classification': keras_retinanet.losses.focal()
-    },
-    optimizer=keras.optimizers.adam(lr=1e-5, clipnorm=0.001)
-)
-```
-2) Create generators for training and testing data (an example is show in [`keras_retinanet.preprocessing.PascalVocGenerator`](https://github.com/fizyr/keras-retinanet/blob/master/keras_retinanet/preprocessing/pascal_voc.py)).
-3) Use `model.fit_generator` to start training.
 
 ## Testing
 An example of testing the network can be seen in [this Notebook](https://github.com/delftrobotics/keras-retinanet/blob/master/examples/ResNet50RetinaNet.ipynb).
@@ -174,19 +111,6 @@ Creating your own dataset does not always work out of the box. There is a [`debu
 
 Particularly helpful is the `--annotations` flag which displays your annotations on the images from your dataset. Annotations are colored in green when there are anchors available and colored in red when there are no anchors available. If an annotation doesn't have anchors available, it means it won't contribute to training. It is normal for a small amount of annotations to show up in red, but if most or all annotations are red there is cause for concern. The most common issues are that the annotations are too small or too oddly shaped (stretched out).
 
-## Results
-
-### MS COCO
-
-
-## Status
-Example output images using `keras-retinanet` are shown below.
-
-<p align="center">
-  <img src="https://github.com/delftrobotics/keras-retinanet/blob/master/images/coco1.png" alt="Example result of RetinaNet on MS COCO"/>
-  <img src="https://github.com/delftrobotics/keras-retinanet/blob/master/images/coco2.png" alt="Example result of RetinaNet on MS COCO"/>
-  <img src="https://github.com/delftrobotics/keras-retinanet/blob/master/images/coco3.png" alt="Example result of RetinaNet on MS COCO"/>
-</p>
 
 ### Notes
 * This repository requires Keras 2.1.3.
